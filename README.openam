@@ -59,3 +59,19 @@ auth_opt_openam_agent_user     amadmin
 auth_opt_openam_agent_password <password for amadmin>
 
 
+----------------------------
+client testing:
+
+Publishing a message using username and password:
+mosquitto_pub -t "/test/1" -m "hei" -u username -P password
+
+Publishing a message using id-token
+1. get your id-token
+2. Use the special username:
+mosquitto_pub -t "/test/1" -m "hei id token" -u _authn_openid_ -P <id-token>
+
+Publishing your message using access-token
+1. get your access token
+2. Use the special username:
+mosquitto_pub -t "/test/1" -m "hei access token" -u _authn_access_token_ -P <access-token>
+

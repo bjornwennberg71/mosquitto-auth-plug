@@ -1,0 +1,61 @@
+You need mosquitto-1.5 with plugin-version 3 supported.
+
+In order to make the forgerock openam backend plugin work, I had to do the following hacks:
+1. Copy in the mosquitto_internal.h and rename it into be_mosquitto_internal.h
+2. Edit the auth-plug.c to use the mosquitto_internal->password as parameter into the acl-check
+   passed to the plugin
+
+Mosquitto should either create utility functions to access their interal structure, or make it available.
+
+Example of how to start up mosquitto with this plugin enabled:
+
+1. Compile up mosquitto-1.5
+2. Use defalt values when compiling the server
+3. Download and compile the mosquitto-auth-plug
+   Ensure you hace json-c installed
+   git clone https://github.com/bjornwennberg71/mosquitto-auth-plug
+   cp config.mk.in config.mk
+   make install
+4. Make sure mosquitto can read the plugin [see below in the sample mosquitto.conf for the complete path to the plugin]
+
+Start mosquitto-1.5
+./mosquitto -c /etc/mosquitto/mosquitto.conf -v
+
+
+-----------------------------------------
+Sample of the /mosquitto/mosquitto.conf:
+
+# Place your local configuration in /etc/mosquitto/conf.d/
+#
+# A full description of the configuration file is at
+# /usr/share/doc/mosquitto/examples/mosquitto.conf.example
+
+pid_file /var/run/mosquitto.pid
+
+#persistence true
+#persistence_location /var/lib/mosquitto/
+
+log_type all
+log_dest file /var/log/mosquitto/mosquitto.log
+per_listener_settings true
+
+allow_anonymous false
+#include_dir /etc/mosquitto/conf.d
+
+auth_plugin /usr/lib/mosquitto-auth-plugin/auth-plugin.so
+auth_opt_acl_cacheseconds 0
+
+auth_opt_backends 	openam
+auth_opt_openam_host           myiot-am.forgerocklabs.net
+auth_opt_openam_port           8080
+auth_opt_openam_path           /openam
+auth_opt_openam_realm          /edgecontroller
+auth_opt_openam_cookiename     iPlanetDirectoryPro
+auth_opt_openam_client_id      egdecontroller
+auth_opt_openam_client_secret  <password for edgecontroller>
+auth_opt_openam_application    things
+auth_opt_openam_agent_realm    /
+auth_opt_openam_agent_user     amadmin
+auth_opt_openam_agent_password <password for amadmin>
+
+

@@ -14,6 +14,7 @@ of several distinct back-ends:
 * JWT
 * MongoDB
 * Files
+* OpenAM (ForgeRock)
 
 ## Introduction
 
@@ -807,6 +808,30 @@ Sending CONNACK to mosqpub/90759-tiggr.ww. (0)
 Received PUBLISH from mosqpub/90759-tiggr.ww. (d0, q0, r0, m0, 'x', ... (2 bytes))
 Received DISCONNECT from mosqpub/90759-tiggr.ww.
 ```
+
+### OPENAM
+
+The `openam` back-end communicates with ForgerRock OpenAM backend server. It is built upon the http backend 
+
+The following `auth_opt_openam_xxx` options are supported by the `openam` back-end:
+
+| Option            | typical           |  Mandatory  | Meaning     |
+| ---------------------| ----------------- | :---------: | ----------  |
+|  |            
+| auth_opt_openam_host           | myiot-am.forgerocklabs.net |      Y      | Must be a hostname (not an ip) 
+| auth_opt_openam_port           | 8080                       |      Y      | TCP port number 
+| auth_opt_openam_path           | /openam                    |      Y      | rest api         
+| auth_opt_openam_realm          | /edgecontroller            |      Y      | realm            
+| auth_opt_openam_cookiename     | iPlanetDirectoryPro        |      Y      | cookie          
+| auth_opt_openam_client_id      | egdecontroller             |      Y      | client id       
+| auth_opt_openam_client_secret  | <the password>             |      Y      | client password 
+| auth_opt_openam_application    | things                     |      Y      | application 
+| auth_opt_openam_agent_realm    | /                          |      Y      | Which realm
+| auth_opt_openam_agent_user     | <username>                 |      Y      | agent user id
+| auth_opt_openam_agent_password | <password>                 |      Y      | agent password
+
+```
+
 
 ## Requirements
 

@@ -88,6 +88,7 @@ ifneq ($(BACKEND_HTTP), no)
 	OBJS += be-http.o
 endif
 
+
 ifneq ($(BACKEND_JWT), no)
 	BACKENDS+= -DBE_JWT
 	BACKENDSTR += JWT
@@ -113,6 +114,14 @@ ifneq ($(BACKEND_FILES), no)
 	BACKENDSTR += Files
 
 	OBJS += be-files.o
+endif
+
+ifneq ($(BACKEND_OPENAM), no)
+	BACKENDS+= -DBE_OPENAM
+	BACKENDSTR += OPENAM
+
+	BE_LDADD += -lcurl -ljson-c
+	OBJS += be-openam.o
 endif
 
 ifeq ($(origin SUPPORT_DJANGO_HASHERS), undefined)

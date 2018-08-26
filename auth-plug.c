@@ -45,6 +45,20 @@
 #endif
 
 #if MOSQ_AUTH_PLUGIN_VERSION >= 3
+#undef WITH_BROKER
+#undef WITH_ADNS
+#if 0
+struct mosquitto {
+  mosq_socksock = 7,
+    protocol = mosq_p_mqtt31,
+    address = 0x675d50 "127.0.0.1",
+    id = 0x675d30 "mosqpub/5286-xps",
+    username = 0x676430 "ahall",
+    password = 0x676b70 "Passw0rd",
+    keepalive = 60,
+    last_mid = 0, state = mosq_cs_connected, last_msg_in = 3433, next_msg_out = 3493, ping_t = 0, in_packet = {payload = 0x6806e0 "", next = 0x0, remaining_mult = 128, remaining_length = 10, packet_length = 0, to_process = 0, pos = 10, mid = 0, command = 48 '0', remaining_count = 1 '\001'}, current_out_packet = 0x0, out_packet = 0x0, will = 0x0, want_write = false, want_connect = false, clean_session = true, is_dropping = false, is_bridge = false, bridge = 0x0, inflight_msgs = 0x0, last_inflight_msg = 0x0, queued_msgs = 0x0, last_queued_msg = 0x0, msg_bytes = 0, msg_bytes12 = 0, msg_count = 0, msg_count12 = 0, acl_list = 0x0, listener = 0x63bd90, disconnect_t = 0, out_packet_last = 0x0, subs = 0x0, sub_count = 0, pollfd_index = 2, ws_want_write = false, hh_id = {tbl = 0x68aec0, prev = 0x0, next = 0x0, hh_prev = 0x0, hh_next = 0x0, key = 0x675d30, keylen = 16, hashv = 1951428987}, hh_sock = {tbl = 0x6771c0, prev = 0x0, next = 0x0, hh_prev = 0x0, hh_next = 0x0, key = 0x677030, keylen = 4, hashv = 3006682874}, for_free_next = 0x0};
+#endif
+#include "be-mosquitto_internal.h"
 # define mosquitto_auth_opt mosquitto_opt
 #endif
 
@@ -607,6 +621,7 @@ int mosquitto_auth_acl_check(void *userdata, const char *clientid, const char *u
 	struct cliententry *e;
 	char *clientid = NULL;
 	char *username = NULL;
+        char *password = client->password;
 	const char *topic = msg->topic;
 	HASH_FIND(hh, ud->clients, &client, sizeof(void *), e);
 	if (e) {
@@ -697,7 +712,8 @@ int mosquitto_auth_acl_check(void *userdata, const char *clientid, const char *u
 	for (bep = ud->be_list; bep && *bep; bep++) {
 		struct backend_p *b = *bep;
 
-		match = b->aclcheck((*bep)->conf, clientid, username, topic, access);
+                    //match = b->aclcheck((*bep)->conf, clientid, username, topic, access);
+                match = b->aclcheck((*bep)->conf, username, password, topic, access);                
 		if (match == BACKEND_ALLOW) {
 			backend_name = b->name;
 			_log(LOG_DEBUG, "aclcheck(%s, %s, %d) trying to acl with %s",

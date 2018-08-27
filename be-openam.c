@@ -1,7 +1,7 @@
 /*
  * bjornwennberg71@gmail.com
  * 
- * built upon be-http.c
+ * built upon be-openam.c
  *
  */
 
@@ -59,9 +59,9 @@ WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp)
 // regular username/password auth
 static
 int
-http_post_authenticate_username_password(void *handle, char *uri, const char *clientid, const char *username, const char *password, const char *topic, int acc, int method, char *tokenid)
+openam_post_authenticate_username_password(void *handle, char *uri, const char *clientid, const char *username, const char *password, const char *topic, int acc, int method, char *tokenid)
 {
-  //struct http_backend *conf = (struct http_backend *)handle;
+  //struct openam_backend *conf = (struct openam_backend *)handle;
   CURL *curl;
   struct curl_slist *headerlist = NULL;
   int re;
@@ -130,12 +130,12 @@ http_post_authenticate_username_password(void *handle, char *uri, const char *cl
     }
     else
     {
-          //_log(LOG_NOTICE, "http auth fail re=%d respCode=%d", re, respCode);
+          //_log(LOG_NOTICE, "openam auth fail re=%d respCode=%d", re, respCode);
     }
   }
   else
   {
-    _log(LOG_DEBUG, "http req fail url=%s re=%s", url, curl_easy_strerror(re));
+    _log(LOG_DEBUG, "openam req fail url=%s re=%s", url, curl_easy_strerror(re));
     ok = BACKEND_ERROR;
   }
 
@@ -199,7 +199,7 @@ http_post_authenticate_username_password(void *handle, char *uri, const char *cl
 // if username == “_authn_openid_” then the <password> is and OpenID Token
 //
 // curl -X POST 
-//  'http://myiot-am.forgerocklabs.net:8080/openam/oauth2/idtokeninfo?realm=edgecontroller' 
+//  'openam://myiot-am.forgerocklabs.net:8080/openam/oauth2/idtokeninfo?realm=edgecontroller' 
 //  -H 'Authorization: Basic ZWRnZWNvbnRyb2xsZXI6cGFzc3cwcmQy'          
 //  -H 'Cache-Control: no-cache'                                        
 //  -H 'Content-Type: application/x-www-form-urlencoded'                
@@ -212,9 +212,9 @@ http_post_authenticate_username_password(void *handle, char *uri, const char *cl
 //
 static
 int
-http_post_authenticate_idtoken(void *handle, char *uri, const char *clientid, const char *username, const char *password, const char *topic, int acc, int method, char *token_response)
+openam_post_authenticate_idtoken(void *handle, char *uri, const char *clientid, const char *username, const char *password, const char *topic, int acc, int method, char *token_response)
 {
-  struct http_backend *conf = (struct http_backend *)handle;
+  struct openam_backend *conf = (struct openam_backend *)handle;
   CURL *curl;
   struct curl_slist *headerlist = NULL;
   int re;
@@ -291,12 +291,12 @@ http_post_authenticate_idtoken(void *handle, char *uri, const char *clientid, co
     }
     else
     {
-          //_log(LOG_NOTICE, "http auth fail re=%d respCode=%d", re, respCode);
+          //_log(LOG_NOTICE, "openam auth fail re=%d respCode=%d", re, respCode);
     }
   }
   else
   {
-    _log(LOG_DEBUG, "http req fail url=%s re=%s", url, curl_easy_strerror(re));
+    _log(LOG_DEBUG, "openam req fail url=%s re=%s", url, curl_easy_strerror(re));
     ok = BACKEND_ERROR;
   }
 
@@ -326,7 +326,7 @@ http_post_authenticate_idtoken(void *handle, char *uri, const char *clientid, co
 //
 static
 int
-http_post_authenticate_accesstoken(void *handle, char *uri, const char *clientid, const char *username, const char *password, const char *topic, int acc, int method, char *token_response)
+openam_post_authenticate_accesstoken(void *handle, char *uri, const char *clientid, const char *username, const char *password, const char *topic, int acc, int method, char *token_response)
 {
   CURL *curl;
   struct curl_slist *headerlist = NULL;
@@ -393,12 +393,12 @@ http_post_authenticate_accesstoken(void *handle, char *uri, const char *clientid
     }
     else
     {
-          //_log(LOG_NOTICE, "http auth fail re=%d respCode=%d", re, respCode);
+          //_log(LOG_NOTICE, "openam auth fail re=%d respCode=%d", re, respCode);
     }
   }
   else
   {
-    _log(LOG_DEBUG, "http req fail url=%s re=%s", url, curl_easy_strerror(re));
+    _log(LOG_DEBUG, "openam req fail url=%s re=%s", url, curl_easy_strerror(re));
     ok = BACKEND_ERROR;
   }
 
@@ -422,9 +422,9 @@ http_post_authenticate_accesstoken(void *handle, char *uri, const char *clientid
 //
 static
 int
-http_post_authorize(void *handle, const char *uri, const char *clientid, const char *username, const char *password, const char *topic, int acc, int method, char *tokenid, char *ssoToken)
+openam_post_authorize(void *handle, const char *uri, const char *clientid, const char *username, const char *password, const char *topic, int acc, int method, char *tokenid, char *ssoToken)
 {
-  struct http_backend *conf = (struct http_backend *)handle;
+  struct openam_backend *conf = (struct openam_backend *)handle;
   CURL *curl;
   struct curl_slist *headerlist = NULL;
   int re;
@@ -550,12 +550,12 @@ http_post_authorize(void *handle, const char *uri, const char *clientid, const c
     }
     else
     {
-          //_log(LOG_NOTICE, "http auth fail re=%d respCode=%d", re, respCode);
+          //_log(LOG_NOTICE, "openam auth fail re=%d respCode=%d", re, respCode);
     }
   }
   else
   {
-    _log(LOG_DEBUG, "http req fail url=%s re=%s", url, curl_easy_strerror(re));
+    _log(LOG_DEBUG, "openam req fail url=%s re=%s", url, curl_easy_strerror(re));
     ok = BACKEND_ERROR;
   }
 
@@ -642,16 +642,16 @@ http_post_authorize(void *handle, const char *uri, const char *clientid, const c
 // Fill in conf struct
 //
 void *
-be_http_init()
+be_openam_init()
 {
   /* printf("*** %s\n", __FUNCTION__); */
   /* fflush(stdout); */
   
-  struct http_backend *conf;
-  char *hostname;
-  char *getuser_uri;
-  char *superuser_uri;
-  char *aclcheck_uri;
+  struct openam_backend *conf;
+//  char *hostname;
+//  char *getuser_uri;
+//  char *superuser_uri;
+//  char *aclcheck_uri;
   char *auth_opt_openam_host; // myiot-am.forgerocklabs.net
   char *auth_opt_openam_port; // 8080
   char *auth_opt_openam_path; // /openam
@@ -669,23 +669,23 @@ be_http_init()
     return (NULL);
   }
 
-  if ((hostname = p_stab("http_ip")) == NULL && (hostname = p_stab("http_hostname")) == NULL) {
-    _fatal("Mandatory parameter: one of either `http_ip' or `http_hostname' required");
-    return (NULL);
-  }
+  /* if ((hostname = p_stab("openam_ip")) == NULL && (hostname = p_stab("openam_hostname")) == NULL) { */
+  /*   _fatal("Mandatory parameter: one of either `openam_ip' or `openam_hostname' required"); */
+  /*   return (NULL); */
+  /* } */
   
-  if ((getuser_uri = p_stab("http_getuser_uri")) == NULL) {
-    _fatal("Mandatory parameter `http_getuser_uri' missing");
-    return (NULL);
-  }
-  if ((superuser_uri = p_stab("http_superuser_uri")) == NULL) {
-    _fatal("Mandatory parameter `http_superuser_uri' missing");
-    return (NULL);
-  }
-  if ((aclcheck_uri = p_stab("http_aclcheck_uri")) == NULL) {
-    _fatal("Mandatory parameter `http_aclcheck_uri' missing");
-    return (NULL);
-  }
+  /* if ((getuser_uri = p_stab("openam_getuser_uri")) == NULL) { */
+  /*   _fatal("Mandatory parameter `openam_getuser_uri' missing"); */
+  /*   return (NULL); */
+  /* } */
+  /* if ((superuser_uri = p_stab("openam_superuser_uri")) == NULL) { */
+  /*   _fatal("Mandatory parameter `openam_superuser_uri' missing"); */
+  /*   return (NULL); */
+  /* } */
+  /* if ((aclcheck_uri = p_stab("openam_aclcheck_uri")) == NULL) { */
+  /*   _fatal("Mandatory parameter `openam_aclcheck_uri' missing"); */
+  /*   return (NULL); */
+  /* } */
 
   auth_opt_openam_host = p_stab("openam_host");
   if (!auth_opt_openam_host)
@@ -765,39 +765,52 @@ be_http_init()
   }
   
 
-  conf = (struct http_backend *)malloc(sizeof(struct http_backend));
-  conf->hostname = hostname;
-  conf->port = p_stab("http_port") == NULL ? 80 : atoi(p_stab("http_port"));
-  if (p_stab("http_hostname") != NULL) {
+  conf = (struct openam_backend *)malloc(sizeof(struct openam_backend));
+      //conf->hostname = hostname;
+  conf->port = p_stab("openam_port") == NULL ? 80 : atoi(p_stab("openam_port"));
+  if (p_stab("openam_hostname") != NULL) {
     conf->hostheader = (char *)malloc(128);
-    sprintf(conf->hostheader, "Host: %s", p_stab("http_hostname"));
+    sprintf(conf->hostheader, "Host: %s", p_stab("openam_hostname"));
   }
   else
   {
     conf->hostheader = NULL;
   }
-  conf->getuser_uri = getuser_uri;
-  conf->superuser_uri = superuser_uri;
-  conf->aclcheck_uri = aclcheck_uri;
+      //conf->getuser_uri = getuser_uri;
+      //conf->superuser_uri = superuser_uri;
+      //conf->aclcheck_uri = aclcheck_uri;
 
-  conf->getuser_envs = p_stab("http_getuser_params");
-  conf->superuser_envs = p_stab("http_superuser_params");
-  conf->aclcheck_envs = p_stab("http_aclcheck_params");
-  if(p_stab("http_basic_auth_key")!= NULL){
-    conf->basic_auth = (char *)malloc( strlen("Authorization: Basic %s") + strlen(p_stab("http_basic_auth_key")));
-    sprintf(conf->basic_auth, "Authorization: Basic %s",p_stab("http_basic_auth_key"));
+  conf->getuser_envs = p_stab("openam_getuser_params");
+//  conf->superuser_envs = p_stab("openam_superuser_params");
+  conf->aclcheck_envs = p_stab("openam_aclcheck_params");
+  if(p_stab("openam_basic_auth_key")!= NULL){
+    conf->basic_auth = (char *)malloc( strlen("Authorization: Basic %s") + strlen(p_stab("openam_basic_auth_key")));
+    sprintf(conf->basic_auth, "Authorization: Basic %s",p_stab("openam_basic_auth_key"));
   }
   else
   {
     conf->basic_auth = NULL;
   }
 
-  if (p_stab("http_with_tls") != NULL) {
-    conf->with_tls = p_stab("http_with_tls");
-  } else {
+
+  if (p_stab("openam_with_tls") != NULL)
+  {
+    conf->with_tls = p_stab("openam_with_tls");
+  }
+  else
+  {
     conf->with_tls = "false";
   }
-  conf->retry_count = p_stab("http_retry_count") == NULL ? 3 : atoi(p_stab("http_retry_count"));
+  if (strcmp(conf->with_tls, "true") == 0)
+  {
+    conf->is_tls = 1;
+  }
+  else
+  {
+    conf->is_tls = 0;
+  }
+  
+  conf->retry_count = p_stab("openam_retry_count") == NULL ? 3 : atoi(p_stab("openam_retry_count"));
 
   conf->auth_opt_openam_host          = auth_opt_openam_host;
   conf->auth_opt_openam_port          = atoi(auth_opt_openam_port);
@@ -814,14 +827,14 @@ be_http_init()
 
       //
       // authenticate_uri
-      // http://myiot-am.forgerocklabs.net:8080/openam/json/authenticate?realm=edgecontroller
+      // openam://myiot-am.forgerocklabs.net:8080/openam/json/authenticate?realm=edgecontroller
       // 
   char
     *p = malloc(5000);
 
 
   sprintf(p, "%s://%s:%d%s/json/authenticate?realm=%s",
-          (conf->with_tls ? "http" : "https"),
+          (conf->is_tls ? "https" : "http"),
           conf->auth_opt_openam_host,
           conf->auth_opt_openam_port,
           conf->auth_opt_openam_path,
@@ -833,12 +846,12 @@ be_http_init()
 
       //
       // authenticate_agent_uri
-      // http://myiot-am.forgerocklabs.net:8080/openam/json/authenticate?realm=edgecontroller
+      // openam://myiot-am.forgerocklabs.net:8080/openam/json/authenticate?realm=edgecontroller
       // 
   
   p = malloc(5000);
   sprintf(p, "%s://%s:%d%s/json/authenticate?realm=%s",
-          (conf->with_tls ? "http" : "https"),
+          (conf->is_tls ? "https" : "http"),
           conf->auth_opt_openam_host,
           conf->auth_opt_openam_port,
           conf->auth_opt_openam_path,
@@ -849,12 +862,12 @@ be_http_init()
 
       //
       // authorize_client_uri
-      // http://myiot-am.forgerocklabs.net:8080/openam/json/policies?_action=evaluate&realm=edgecontroller
+      // openam://myiot-am.forgerocklabs.net:8080/openam/json/policies?_action=evaluate&realm=edgecontroller
       // 
   
   p = malloc(5000);
   sprintf(p, "%s://%s:%d%s/json/policies?_action=evaluate&realm=%s",
-          (conf->with_tls ? "http" : "https"),
+          (conf->is_tls ? "https" : "http"),
           conf->auth_opt_openam_host,
           conf->auth_opt_openam_port,
           conf->auth_opt_openam_path,
@@ -865,12 +878,12 @@ be_http_init()
 
       //
       // authenticate_idtoken
-      // http://myiot-am.forgerocklabs.net:8080/openam/oauth2/idtokeninfo?realm=edgecontroller' 
+      // openam://myiot-am.forgerocklabs.net:8080/openam/oauth2/idtokeninfo?realm=edgecontroller' 
       // 
   
   p = malloc(5000);
   sprintf(p, "%s://%s:%d%s/oauth2/idtokeninfo?realm=%s",
-          (conf->with_tls ? "http" : "https"),
+          (conf->is_tls ? "https" : "http"),
           conf->auth_opt_openam_host,
           conf->auth_opt_openam_port,
           conf->auth_opt_openam_path,
@@ -881,12 +894,12 @@ be_http_init()
 
       //
       // authenticate_accesstoken
-      // http://myiot-am.forgerocklabs.net:8080/openam/oauth2/userinfo?realm=edgecontroller' 
+      // openam://myiot-am.forgerocklabs.net:8080/openam/oauth2/userinfo?realm=edgecontroller' 
       // 
   
   p = malloc(5000);
   sprintf(p, "%s://%s:%d%s/oauth2/userinfo?realm=%s",
-          (conf->with_tls ? "http" : "https"),
+          (conf->is_tls ? "https" : "http"),
           conf->auth_opt_openam_host,
           conf->auth_opt_openam_port,
           conf->auth_opt_openam_path,
@@ -896,11 +909,11 @@ be_http_init()
   conf->openam_authenticate_accesstoken = p;
   
   _log(LOG_DEBUG, "with_tls=%s", conf->with_tls);
-  _log(LOG_DEBUG, "getuser_uri=%s", getuser_uri);
-  _log(LOG_DEBUG, "superuser_uri=%s", superuser_uri);
-  _log(LOG_DEBUG, "aclcheck_uri=%s", aclcheck_uri);
-  _log(LOG_DEBUG, "getuser_params=%s", conf->getuser_envs);
-  _log(LOG_DEBUG, "superuser_params=%s", conf->superuser_envs);
+//  _log(LOG_DEBUG, "getuser_uri=%s", getuser_uri);
+//  _log(LOG_DEBUG, "superuser_uri=%s", superuser_uri);
+//  _log(LOG_DEBUG, "aclcheck_uri=%s", aclcheck_uri);
+//  _log(LOG_DEBUG, "getuser_params=%s", conf->getuser_envs);
+//  _log(LOG_DEBUG, "superuser_params=%s", conf->superuser_envs);
   _log(LOG_DEBUG, "aclcheck_paramsi=%s", conf->aclcheck_envs);
   _log(LOG_DEBUG, "retry_count=%d", conf->retry_count);
 
@@ -922,12 +935,12 @@ be_http_init()
 //
 // deallocate all
 void
-be_http_destroy(void *handle)
+be_openam_destroy(void *handle)
 {
   /* printf("*** %s\n", __FUNCTION__); */
   /* fflush(stdout); */
 
-  struct http_backend *conf = (struct http_backend *)handle;
+  struct openam_backend *conf = (struct openam_backend *)handle;
 
   if (conf)
   {
@@ -941,12 +954,12 @@ be_http_destroy(void *handle)
 // authn part
 //
 int
-be_http_getuser(void *handle, const char *username, const char *password, char **phash)
+be_openam_getuser(void *handle, const char *username, const char *password, char **phash)
 {
-  struct http_backend *conf = (struct http_backend *)handle;
+  struct openam_backend *conf = (struct openam_backend *)handle;
   int re, try;
 
-  printf("be_http_getuser\n");
+  printf("be_openam_getuser\n");
   if (username == NULL)
   {
     return BACKEND_DEFER;
@@ -971,15 +984,15 @@ be_http_getuser(void *handle, const char *username, const char *password, char *
     
     if (strcmp(username, "_authn_openid_") == 0)
     {
-      re = http_post_authenticate_idtoken(handle, conf->openam_authenticate_idtoken, NULL, username, password, NULL, -1, METHOD_GETUSER, azTokenID);
+      re = openam_post_authenticate_idtoken(handle, conf->openam_authenticate_idtoken, NULL, username, password, NULL, -1, METHOD_GETUSER, azTokenID);
     }
     else if (strcmp(username, "_authn_access_token_") == 0)
     {
-      re = http_post_authenticate_accesstoken(handle, conf->openam_authenticate_accesstoken, NULL, username, password, NULL, -1, METHOD_GETUSER, azTokenID);
+      re = openam_post_authenticate_accesstoken(handle, conf->openam_authenticate_accesstoken, NULL, username, password, NULL, -1, METHOD_GETUSER, azTokenID);
     }
     else
     {
-      re = http_post_authenticate_username_password(handle, conf->openam_authenticate_uri, NULL, username, password, NULL, -1, METHOD_GETUSER, azTokenID);
+      re = openam_post_authenticate_username_password(handle, conf->openam_authenticate_uri, NULL, username, password, NULL, -1, METHOD_GETUSER, azTokenID);
     }
   }
   
@@ -992,20 +1005,20 @@ be_http_getuser(void *handle, const char *username, const char *password, char *
 //
 //
 int
-be_http_superuser(void *handle, const char *username)
+be_openam_superuser(void *handle, const char *username)
 {
   return 0;
 #if 0  
-  struct http_backend *conf = (struct http_backend *)handle;
+  struct openam_backend *conf = (struct openam_backend *)handle;
   int re, try;
 
-  printf("be_http_superuser\n");
+  printf("be_openam_superuser\n");
   re = BACKEND_ERROR;
   try = 0;
   while (re == BACKEND_ERROR && try <= conf->retry_count) {
     try++;
-    re = http_post(handle, conf->openam_authenticate_uri, NULL, username, NULL, NULL, -1, METHOD_SUPERUSER);
-//    re = http_post(handle, conf->superuser_uri, NULL, username, NULL, NULL, -1, METHOD_SUPERUSER);
+    re = openam_post(handle, conf->openam_authenticate_uri, NULL, username, NULL, NULL, -1, METHOD_SUPERUSER);
+//    re = openam_post(handle, conf->superuser_uri, NULL, username, NULL, NULL, -1, METHOD_SUPERUSER);
   }
   return re;
 #endif
@@ -1034,12 +1047,12 @@ be_http_superuser(void *handle, const char *username)
       //  
 
 int
-be_http_aclcheck(void *handle, const char *username, const char *password, const char *topic, int acc)
+be_openam_aclcheck(void *handle, const char *username, const char *password, const char *topic, int acc)
 {
       //printf("*** %s\n", __FUNCTION__);
   fflush(stdout);
 
-  struct http_backend *conf = (struct http_backend *)handle;
+  struct openam_backend *conf = (struct openam_backend *)handle;
   int re, try;
   char
     azTokenID[5000];
@@ -1053,7 +1066,7 @@ be_http_aclcheck(void *handle, const char *username, const char *password, const
   int
     iType = 0;
 
-  http_post_authenticate_username_password(conf, conf->openam_authenticate_agent_uri, NULL, conf->auth_opt_openam_agent_user, conf->auth_opt_openam_agent_password, topic, acc, METHOD_ACLCHECK, ssoToken);
+  openam_post_authenticate_username_password(conf, conf->openam_authenticate_agent_uri, NULL, conf->auth_opt_openam_agent_user, conf->auth_opt_openam_agent_password, topic, acc, METHOD_ACLCHECK, ssoToken);
   
       // do id-token stuff
   while (re == BACKEND_ERROR && try <= conf->retry_count)
@@ -1063,18 +1076,18 @@ be_http_aclcheck(void *handle, const char *username, const char *password, const
     if (strcmp(username, "_authn_openid_") == 0)
     {
       iType = 1;
-      re = http_post_authenticate_idtoken(conf, conf->openam_authenticate_idtoken, NULL, username, password, NULL, -1, METHOD_ACLCHECK, azTokenID);
+      re = openam_post_authenticate_idtoken(conf, conf->openam_authenticate_idtoken, NULL, username, password, NULL, -1, METHOD_ACLCHECK, azTokenID);
     }
     else if (strcmp(username, "_authn_access_token_") == 0)
     {
       iType = 2;
           // do access token stuff
-      re = http_post_authenticate_accesstoken(conf, conf->openam_authenticate_accesstoken, NULL, username, password, NULL, -1, METHOD_ACLCHECK, azTokenID);
+      re = openam_post_authenticate_accesstoken(conf, conf->openam_authenticate_accesstoken, NULL, username, password, NULL, -1, METHOD_ACLCHECK, azTokenID);
     }
     else
     {
       iType = 0;
-      re = http_post_authenticate_username_password(conf, conf->openam_authenticate_agent_uri, NULL, conf->auth_opt_openam_agent_user, conf->auth_opt_openam_agent_password, topic, acc, METHOD_ACLCHECK, azTokenID);
+      re = openam_post_authenticate_username_password(conf, conf->openam_authenticate_agent_uri, NULL, conf->auth_opt_openam_agent_user, conf->auth_opt_openam_agent_password, topic, acc, METHOD_ACLCHECK, azTokenID);
     }
 
   }
@@ -1086,11 +1099,11 @@ be_http_aclcheck(void *handle, const char *username, const char *password, const
     while (re == BACKEND_ERROR && try <= conf->retry_count)
     {
       try++;
-      re = http_post_authorize(conf, conf->openam_authorize_user_uri, NULL, username, password, topic, acc, iType, azTokenID, ssoToken);
+      re = openam_post_authorize(conf, conf->openam_authorize_user_uri, NULL, username, password, topic, acc, iType, azTokenID, ssoToken);
     }
   }
   
   return re;
 };
-#endif /* BE_OPENAM */
+#endif /* BE_HTTP */
 

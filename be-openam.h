@@ -1,27 +1,28 @@
 /*
  * bjornwennberg71@gmail.com
  *
- * built upon be-http.h
+ * built upon be-openam.h
  *
  */
 #ifdef BE_OPENAM
 
 #define MAXPARAMSLEN  1024
 #define METHOD_GETUSER   1
-#define METHOD_SUPERUSER 2
+//#define METHOD_SUPERUSER 2
 #define METHOD_ACLCHECK  3
 
-struct http_backend {
+struct openam_backend {
 	char *hostname;
 	int port;
 	char *hostheader;
 	char *getuser_uri;
-	char *superuser_uri;
+//	char *superuser_uri;
 	char *aclcheck_uri;
 	char *getuser_envs;
-	char *superuser_envs;
+//	char *superuser_envs;
 	char *aclcheck_envs;
 	char *with_tls;
+  int   is_tls;
 	char *basic_auth;
 	int retry_count;
         char *auth_opt_openam_host; // myiot-am.forgerocklabs.net
@@ -44,10 +45,10 @@ struct http_backend {
   
 };
 
-void *be_http_init();
-void  be_http_destroy(void *conf);
-int   be_http_getuser(void *conf, const char *username, const char *password, char **phash);
-int   be_http_superuser(void *conf, const char *username);
-int   be_http_aclcheck(void *conf, const char *clientid, const char *username, const char *topic, int acc);
+void *be_openam_init();
+void  be_openam_destroy(void *conf);
+int   be_openam_getuser(void *conf, const char *username, const char *password, char **phash);
+int   be_openam_superuser(void *conf, const char *username);
+int   be_openam_aclcheck(void *conf, const char *clientid, const char *username, const char *topic, int acc);
 
 #endif /* BE_OPENAM */

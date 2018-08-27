@@ -79,6 +79,7 @@ struct mosquitto {
 #include "be-jwt.h"
 #include "be-mongo.h"
 #include "be-files.h"
+#include "be-openam.h"
 
 #include "userdata.h"
 #include "cache.h"
@@ -445,6 +446,26 @@ int mosquitto_auth_plugin_init(void **userdata, struct mosquitto_auth_opt *auth_
 			PSKSETUP;
 		}
 #endif
+
+#if BE_OPENAM
+		if (!strcmp(q, "openam")) {
+			*bep = (struct backend_p *)malloc(sizeof(struct backend_p));
+			memset(*bep, 0, sizeof(struct backend_p));
+			(*bep)->name = strdup("openam");
+			(*bep)->conf = be_openam_init();
+			if ((*bep)->conf == NULL) {
+				_fatal("%s init returns NULL", q);
+			}
+			(*bep)->kill =  be_openam_destroy;
+			(*bep)->getuser =  be_openam_getuser;
+			(*bep)->superuser =  be_openam_superuser;
+			(*bep)->aclcheck =  be_openam_aclcheck;
+			found = 1;
+			ud->fallback_be = ud->fallback_be == -1 ? nord : ud->fallback_be;
+			PSKSETUP;
+		}
+#endif
+                
 		if (!found) {
 			_fatal("ERROR: configured back-end `%s' is not compiled in this plugin", q);
 		}

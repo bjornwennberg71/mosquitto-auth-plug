@@ -2,7 +2,7 @@
 # It also contains MOSQUITTO_SRC
 include config.mk
 
-BE_CFLAGS =
+BE_CFLAGS = -g
 BE_LDFLAGS =
 BE_LDADD =
 BE_DEPS =
